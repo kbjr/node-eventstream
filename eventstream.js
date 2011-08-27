@@ -7,6 +7,17 @@
  */
 module.exports.EventStream = function(req, res) {
 	
+	var isOpen = true;
+	res.on('close', function() {
+		isOpen = false;
+	});
+	res.on('end', function() {
+		isOpen = false;
+	});
+	
+	/**
+	 * Last-Event-ID header value
+	 */
 	this.lastEventId = null;
 	
 	/**
@@ -20,6 +31,13 @@ module.exports.EventStream = function(req, res) {
 		res.writeHead(200, {
 			'Content-Type': 'text/event-stream; charset=utf-8'
 		});
+	};
+	
+	/**
+	 * Is the connection open?
+	 */
+	this.isOpen = function() {
+		return isOpen;
 	};
 	
 	/**
@@ -50,6 +68,13 @@ module.exports.EventStream = function(req, res) {
 	 */
 	this.close = function() {
 		res.end();
+	};
+	
+	/**
+	 * Send a keep-alive message
+	 */
+	this.keepAlive = function() {
+		this.sendComment('Keep-Alive');
 	};
 	
 };
@@ -143,6 +168,26 @@ module.exports.EventStream.prototype.sendRetry = function(millisecs) {
 		encode: String
 	});
 };
+
+/**
+ * Send a message, with other optional params
+ *
+ * @access  public
+ * @param   object    the options object
+ * @return  void
+ */
+module.exports.EventStream.prototype.sendMessage = function(opts) {
+	if (opts.event) {
+		this.sendEvent(opts.event);
+	}
+	if (opts.id) {
+		this.sendId(opts.id);
+	}
+	if (opts.retry) {
+		this.sendRetry(opts.retry);
+	}
+	this.sendData(opts.data);
+};
 	
 // ----------------------------------------------------------------------------
 //  Helpers
@@ -198,4 +243,4 @@ var processMessage = function(msg, field) {
 	return msg + '\n';
 };
 	
-/* End of file node-eventstream.js */
+/* End of file eventstream.js */

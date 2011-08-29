@@ -44,11 +44,10 @@ module.exports.EventStream = function(req, res) {
 	 * Send a message to the client
 	 *
 	 * @access  public
-	 * @param   string    the field
-	 * @param   mixed     the value to send
+	 * @param   object    the options object
 	 * @return  void
 	 */
-	this.send = function(field, data) {
+	this.send = function(opts) {
 		opts = opts || { };
 		opts.value = opts.value || '';
 		opts.field = (typeof opts.field === 'string')
@@ -57,7 +56,7 @@ module.exports.EventStream = function(req, res) {
 		opts.value = (typeof opts.encode === 'function')
 			? opts.encode(opts.value)
 			: this.encode(opts.value);
-		res.write(processMessage(opts.field, opts.value) + '\n');
+		res.write(opts.field + ': ' + opts.value + '\n');
 	};
 	
 	/**
@@ -67,6 +66,7 @@ module.exports.EventStream = function(req, res) {
 	 * @return  void
 	 */
 	this.close = function() {
+		isOpen = false;
 		res.end();
 	};
 	
@@ -130,7 +130,7 @@ module.exports.EventStream.prototype.sendEvent = function(event) {
 module.exports.EventStream.prototype.sendData = function(data) {
 	return this.send({
 		field: 'data',
-		value: data
+		value: data + '\n'
 	});
 };
 
@@ -233,10 +233,11 @@ var stringReplace = (function() {
  * Process a string for outputting as a message
  *
  * @access  private
+ * @param   string    the field string
  * @param   string    the message string
  * @return  string
  */
-var processMessage = function(msg, field) {
+var processMessage = function(field, msg) {
 	msg = stringReplace(msg, '\r\n', '\n');
 	msg = stringReplace(msg, '\r', '\n');
 	msg = stringReplace(msg, '\n', '\n' + field + ': ');

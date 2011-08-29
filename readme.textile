@@ -2,6 +2,10 @@ h1. node-eventstream
 
 A server-side companion for EventSource
 
+h2. Install
+
+<pre><code>npm install eventstream</code></pre>
+
 h2. Example
 
 <pre><code>var es = require('eventstream');

@@ -8,10 +8,7 @@
 module.exports.EventStream = function(req, res) {
 	
 	var isOpen = true;
-	res.on('close', function() {
-		isOpen = false;
-	});
-	res.on('end', function() {
+	req.on('close', function() {
 		isOpen = false;
 	});
 	

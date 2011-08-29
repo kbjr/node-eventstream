@@ -7,28 +7,35 @@ h2. Example
 <pre><code>var es = require('eventstream');
 var server = require('http').createServer(function(req, res) {
     
-    // Create an EventStream object and link it to the request/response
-    var eventStream = new es.EventStream(req, res);
+    // Check if this is an event stream request
+    if (req.url === '/my-event-stream') {
     
-    // Start sending keep-alive messages every 15 seconds
-    (function keepAlive() {
-        if (eventStream.isOpen()) {
-            eventStream.keepAlive();
-            setTimeout(keepAlive, 15000);
-        }
-    }());
+        // Create an EventStream object and link it to the request/response
+        var eventStream = new es.EventStream(req, res);
+        
+        // Start sending keep-alive messages every 15 seconds
+        (function keepAlive() {
+            if (eventStream.isOpen()) {
+                eventStream.keepAlive();
+                setTimeout(keepAlive, 15000);
+            }
+        }());
+        
+        // Send a simple message event
+        eventStream.sendMessage({
+            data: 'This is a message'
+        });
+        
+        // Send a more complex message
+        eventStream.sendMessage({
+            event: 'message',
+            id: 'some id value',
+            data: 'This is another message'
+        });
     
-    // Send a simple message event
-    eventStream.sendMessage({
-        data: 'This is a message'
-    });
+    }
     
-    // Send a more complex message
-    eventStream.sendMessage({
-        event: 'message',
-        id: parseInt(eventStream.lastEventId) + 1,
-        data: 'This is another message'
-    });
+    // Otherwise, continue on with the rest of your normal server stuff...
     
 });
 

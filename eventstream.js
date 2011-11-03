@@ -53,7 +53,12 @@ module.exports.EventStream = function(req, res) {
 		opts.value = (typeof opts.encode === 'function')
 			? opts.encode(opts.value)
 			: this.encode(opts.value);
-		res.write(opts.field + ': ' + opts.value + '\n');
+		opts.value.split("\n").forEach(function(line) {
+			res.write(opts.field + ': ' + line + '\n');
+		});
+		if(opts.field == 'data') {
+			res.write('\n');
+		}
 	};
 	
 	/**
@@ -127,7 +132,7 @@ module.exports.EventStream.prototype.sendEvent = function(event) {
 module.exports.EventStream.prototype.sendData = function(data) {
 	return this.send({
 		field: 'data',
-		value: data + '\n'
+		value: data
 	});
 };
 

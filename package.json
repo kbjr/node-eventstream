@@ -2,7 +2,7 @@
   "author": "James Brumond <kbjr14@gmail.com> (http://jbrumond.me)",
   "name": "eventstream",
   "description": "A server-side companion for EventSource",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "repository": {
     "type": "git",
     "url": "git://github.com/kbjr/node-eventstream.git"

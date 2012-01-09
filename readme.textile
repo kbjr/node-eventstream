@@ -16,6 +16,9 @@ var server = require('http').createServer(function(req, res) {
     
         // Create an EventStream object and link it to the request/response
         var eventStream = new es.EventStream(req, res);
+
+        // Send the needed headers
+        eventStream.init();
         
         // Start sending keep-alive messages every 15 seconds
         (function keepAlive() {

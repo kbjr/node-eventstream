@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/kbjr/node-eventstream.png)](http://travis-ci.org/kbjr/node-eventstream)
 h1. node-eventstream
 
 A server-side companion for EventSource
